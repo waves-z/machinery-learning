@@ -68,7 +68,10 @@ func BrokerFactory(cnf *config.Config) (brokeriface.Broker, error) {
 			return redisbroker.New(cnf, redisHost, redisPassword, "", redisDB), nil
 		}
 	}
-
+	// 问题2：不同连接方式有什么区别，redis的socket连接和普通链接的区别是什么？redis的集群模式又是什么
+	// (只有单体架构可以使用)redis+socket: 省去了网络栈的处理，没有网络延迟和协议开销，比tcp/ip更快，更少的网络开销，通过同一台物理机器上运行的进程之间通信， 不使用网络协议
+	// rediss:// : 用来需要加密的场景
+	// redis集群模式：将数据分片存储在不同节点，需要考虑主从复制和分片问题
 	if strings.HasPrefix(cnf.Broker, "redis+socket://") {
 		redisSocket, redisPassword, redisDB, err := ParseRedisSocketURL(cnf.Broker)
 		if err != nil {
@@ -83,10 +86,10 @@ func BrokerFactory(cnf *config.Config) (brokeriface.Broker, error) {
 	}
 
 	if _, ok := os.LookupEnv("DISABLE_STRICT_SQS_CHECK"); ok {
-		//disable SQS name check, so that users can use this with local simulated SQS
-		//where sql broker url might not start with https://sqs
+		// disable SQS name check, so that users can use this with local simulated SQS
+		// where sql broker url might not start with https://sqs
 
-		//even when disabling strict SQS naming check, make sure its still a valid http URL
+		// even when disabling strict SQS naming check, make sure its still a valid http URL
 		if strings.HasPrefix(cnf.Broker, "https://") || strings.HasPrefix(cnf.Broker, "http://") {
 			return sqsbroker.New(cnf), nil
 		}
@@ -208,11 +211,11 @@ func ParseRedisURL(url string) (host, password string, db int, err error) {
 
 	parts := strings.Split(u.Path, "/")
 	if len(parts) == 1 {
-		db = 0 //default redis db
+		db = 0 // default redis db
 	} else {
 		db, err = strconv.Atoi(parts[1])
 		if err != nil {
-			db, err = 0, nil //ignore err here
+			db, err = 0, nil // ignore err here
 		}
 	}
 
