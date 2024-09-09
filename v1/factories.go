@@ -81,6 +81,7 @@ func BrokerFactory(cnf *config.Config) (brokeriface.Broker, error) {
 		return redisbroker.New(cnf, "", redisPassword, redisSocket, redisDB), nil
 	}
 
+	// 为什么要使用eager模式？
 	if strings.HasPrefix(cnf.Broker, "eager") {
 		return eagerbroker.New(), nil
 	}
