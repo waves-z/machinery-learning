@@ -46,7 +46,7 @@ func (h Headers) ForeachKey(handler func(key, val string) error) error {
 // Signature represents a single task invocation
 // 描述和封装一个任务的所有信息
 type Signature struct {
-	UUID           string
+	UUID           string //
 	Name           string
 	RoutingKey     string
 	ETA            *time.Time
