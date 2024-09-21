@@ -7,8 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/RichardKnop/machinery/v1/config"
 	"github.com/redis/go-redis/v9"
+
+	"github.com/RichardKnop/machinery/v1/config"
 )
 
 var (
@@ -53,7 +54,7 @@ func (r Lock) LockWithRetries(key string, unixTsToExpireNs int64) error {
 	for i := 0; i <= r.retries; i++ {
 		err := r.Lock(key, unixTsToExpireNs)
 		if err == nil {
-			//成功拿到锁，返回
+			// 成功拿到锁，返回
 			return nil
 		}
 
